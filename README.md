@@ -36,5 +36,3 @@ See `/screenshots` folder for validation proof:
 1. `npm install`
 2. `node server.js`
 3. API runs on `http://localhost:3000`
-
-#CodvedaJourney #CodvedaExperience Level 2 DONE!
