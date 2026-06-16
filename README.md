@@ -16,9 +16,7 @@
 - Add, view, delete users
 
 
-# Codeveda Internship - Level 2
-
-## D14: Database Indexing + Level 2 Wrap-up
+# Level 2 — User Management Web App with Database + Login
 
 ### Features Implemented
 - **Email Indexing**: Added `index: true` to User schema for faster queries
