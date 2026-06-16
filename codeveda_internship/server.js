@@ -1,72 +1,76 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const User = require('./models/User');
+
 const app = express();
 app.use(express.json());
 
-let users = [
-  {id: 1, name: 'Aman'},
-  {id: 2, name: 'Riya'}
-];
+// MongoDB connect
+mongoose.connect('mongodb://bhoomiraghuvanshi1_db_user:Bhoomi2026@ac-zv0jssh-shard-00-00.tpeq2n3.mongodb.net:27017,ac-zv0jssh-shard-00-01.tpeq2n3.mongodb.net:27017,ac-zv0jssh-shard-00-02.tpeq2n3.mongodb.net:27017/?ssl=true&replicaSet=atlas-femj12-shard-0&authSource=admin&appName=Cluster0')
+.then(() => console.log('MongoDB Connected'))
+.catch(err => console.log(err));
 
-// GET all users
-app.get('/users', (req, res) => {
-  res.status(200).json(users); // 200 = success
-});
-
-// POST create user  
-app.post('/users', (req, res) => {
-  const newUser = {id: users.length + 1, name: req.body.name};
-  if(!req.body.name) {  
-  return res.status(400).json({error: 'Name required'});
-}
-  users.push(newUser);
-  res.status(201).json(newUser); // 201 = created
-});
-
-// PUT update user by ID
-app.put('/users/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  
-  if(isNaN(id)) {
-    return res.status(400).json({error: 'Invalid ID'});
+// 1. GET /users - All users
+app.get('/users', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  
-  const user = users.find(u => u.id === id);
-  if(!user) {
-    return res.status(404).json({error: 'User not found'});
-  }
-  
-  if(!req.body.name) {  
-  return res.status(400).json({error: 'Name required'});
-}
-  
-  user.name = req.body.name;
-  res.status(200).json(user);
 });
 
-// DELETE user by ID
-app.delete('/users/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  
-  if(isNaN(id)) {
-    return res.status(400).json({error: 'Invalid ID'});
+// 2. POST /users - New user
+app.post('/users', async (req, res) => {
+  try {
+    const newUser = new User(req.body);
+    const savedUser = await newUser.save();
+    res.status(201).json(savedUser);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
-  
-  const user = users.find(u => u.id === id);
-  if(!user) {
-    return res.status(404).json({error: 'User not found'});
-  }
-  
-  users = users.filter(u => u.id !== id);
-  res.status(200).json({message: 'User deleted'});
 });
 
-// 404 catch-all route 
-app.use((req, res) => {
-  res.status(404).json({error: 'Route not found'});
+// 3. GET /users/:id - One user
+app.get('/users/:id', async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid ID' });
+    }
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
-// 500 error handler 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({error: 'Something broke!'});
+
+// 4. PUT /users/:id - Update user
+app.put('/users/:id', async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid ID' });
+    }
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
-app.listen(5000, () => console.log('Server running on 5000'));
+
+// 5. DELETE /users/:id - Delete user
+app.delete('/users/:id', async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid ID' });
+    }
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json({ message: 'User deleted' });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+app.listen(5000, () => console.log('Server running on http://localhost:5000'));

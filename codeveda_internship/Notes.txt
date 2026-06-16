@@ -1,0 +1,16 @@
+ Email Index and Uniqueness
+
+1. Schema Changes:
+   File: models/User.js
+   Change: Added `unique: true, index: true` to the email field.
+   Reason: Prevents duplicate user emails and makes email searches faster.
+
+2. Validation Test:
+   Tool: Postman
+   Test 1: POST /users with new email -> Result: 201 Created
+   Test 2: POST /users with same email -> Result: 500 Error, E11000 duplicate key error
+   Conclusion: Uniqueness constraint is working correctly.
+
+3. Screenshots Location:
+   ./screenshots/screenshot_201_created.png
+   ./screenshots/screenshot_duplicate_error.png
