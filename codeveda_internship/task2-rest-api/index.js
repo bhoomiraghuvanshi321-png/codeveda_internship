@@ -7,8 +7,11 @@ dotenv.config();
 const app = express();
 app.use(cors({
   origin: ['https://codeveda-internship.vercel.app', 'http://localhost:3000'],
-  credentials: true
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+app.options('*', cors()); 
 app.use(express.json());
 
 mongoose.connect(process.env.MONGODB_URI)
