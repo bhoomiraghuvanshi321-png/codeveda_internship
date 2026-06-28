@@ -6,7 +6,8 @@ const cors = require('cors');
 dotenv.config();
 const app = express();
 app.use(cors({
-  origin: ['https://codeveda-internship.vercel.app', 'http://localhost:3000']
+  origin: ['https://codeveda-internship.vercel.app', 'http://localhost:3000'],
+  credentials: true
 }));
 app.use(express.json());
 
