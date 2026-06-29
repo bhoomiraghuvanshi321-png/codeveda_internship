@@ -29,16 +29,22 @@ router.post('/signup', async (req, res) => {
 // Login Route
 router.post('/login', async (req, res) => {
   try {
+    console.log("Login request aayi:", req.body); 
+    
     const { email, password } = req.body;
 
     // 1. Check if user exists
     const user = await User.findOne({ email });
+    console.log("User mila DB me:", user); 
+    
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
 
     // 2. Compare password
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log("Password match hua:", isMatch); 
+    
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
@@ -53,6 +59,7 @@ router.post('/login', async (req, res) => {
       token: token
     });
   } catch (err) {
+    console.error("Login me error:", err.message);
     res.status(500).send('Server error');
   }
 });
