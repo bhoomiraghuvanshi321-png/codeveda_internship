@@ -1,6 +1,6 @@
 const express = require('express');
 const User = require('../models/User');
-const auth = require('../middleware/auth'); // Path sahi kar diya
+const auth = require('../middleware/auth'); 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const router = express.Router();
@@ -29,13 +29,13 @@ router.post('/signup', async (req, res) => {
 // Login Route
 router.post('/login', async (req, res) => {
   try {
-    console.log("Login request aayi:", req.body); 
+    console.log("Login request received:", req.body); 
     
     const { email, password } = req.body;
 
     // 1. Check if user exists
     const user = await User.findOne({ email });
-    console.log("User mila DB me:", user); 
+    console.log("User found in DB :", user); 
     
     if (!user) {
       return res.status(400).json({ message: "User not found" });
@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
 
     // 2. Compare password
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("Password match hua:", isMatch); 
+    console.log("Password match status:", isMatch); 
     
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
@@ -59,7 +59,7 @@ router.post('/login', async (req, res) => {
       token: token
     });
   } catch (err) {
-    console.error("Login me error:", err.message);
+    console.error("Login error:", err.message);
     res.status(500).send('Server error');
   }
 });
