@@ -10,19 +10,23 @@ function Signup() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Ye line sabse important hai
-    
+    e.preventDefault(); 
+    console.log("API URL:", process.env.REACT_APP_API_URL);
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/signup', {
-        name, email, password
-      });
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/signup`, {
+  name,
+  email, 
+  password
+});
       
       localStorage.setItem('token', res.data.token);
       navigate('/dashboard'); // Dashboard pe bhej dega
       
     } catch (err) {
-      setError('Signup failed');
-    }
+  console.log('Full Error:', err) 
+  console.log('Backend Bola:', err.response?.data)
+  setError(err.response?.data?.message || 'Signup failed');
+}
   };
 
   return (
