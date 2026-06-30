@@ -64,12 +64,10 @@ router.post('/login', async (req, res) => {
   }
 });
 
-const auth = require('../middleware/auth'); 
-
 // @route   GET api/auth/me
 // @desc    Get logged in user
 // @access  Private
-router.get('/me', auth, async (req, res) => {
+router.get('/me', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
     res.json(user);
